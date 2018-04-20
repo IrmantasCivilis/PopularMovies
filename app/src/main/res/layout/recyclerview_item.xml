@@ -8,8 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/poster_image_view"
-        android:clickable="true"
-        android:focusable="true"
         android:scaleType="fitXY"
         android:contentDescription="@string/content_description"/>
 
