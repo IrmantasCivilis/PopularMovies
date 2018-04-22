@@ -79,5 +79,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         mMovies = movies;
         notifyDataSetChanged();
     }
+
+    public void clearAdapter(){
+        //mMovies = movies;
+        mMovies.clear();
+        notifyDataSetChanged();
+    }
 }
 
