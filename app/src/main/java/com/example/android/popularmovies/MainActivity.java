@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity
     private static final String TOP_RATED = "top_rated?";
     private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
     String movieUrl = "";
-    String posterPath = "";
     String imageSize = "w185/";
     MovieAdapter mAdapter;
     Boolean isConnected;
