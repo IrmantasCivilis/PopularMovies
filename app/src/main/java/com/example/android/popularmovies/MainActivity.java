@@ -26,21 +26,16 @@ public class MainActivity extends AppCompatActivity
 
     public static final String LOG_TAG = MainActivity.class.getName();
     private static final int MOVIE_LOADER_ID = 1;
-
     private static final String API_KEY = "";
     private static final String TMDB_REQUEST_URL = "https://api.themoviedb.org/3/movie/";
     private static final String POPULAR = "popular?";
     private static final String TOP_RATED = "top_rated?";
-    private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
+
     String movieUrl = "";
-    String imageSize = "w185/";
     MovieAdapter mAdapter;
     Boolean isConnected;
-    List<Movie> mMovies;
     TextView mEmptyTextView;
     ProgressBar mLoadingIndicator;
-
-    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +46,7 @@ public class MainActivity extends AppCompatActivity
         mEmptyTextView = findViewById(R.id.empty_text_view);
         mLoadingIndicator = findViewById(R.id.loading_indicator);
 
-        mLayoutManager = new GridLayoutManager(this, 2);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setHasFixedSize(true);
         mAdapter = new MovieAdapter(this, new ArrayList<Movie>(), this);
@@ -60,9 +55,9 @@ public class MainActivity extends AppCompatActivity
         showLoadingIndicator();
         movieUrl = TMDB_REQUEST_URL + POPULAR + API_KEY;
 
-        if(checkConnectivity()){
-        LoaderManager loaderManager = getLoaderManager();
-        loaderManager.initLoader(MOVIE_LOADER_ID, null, MainActivity.this);
+        if (checkConnectivity()) {
+            LoaderManager loaderManager = getLoaderManager();
+            loaderManager.initLoader(MOVIE_LOADER_ID, null, MainActivity.this);
         } else {
             showNoConnection();
         }
@@ -73,13 +68,13 @@ public class MainActivity extends AppCompatActivity
         return new MovieLoader(this, movieUrl);
     }
 
-
     @Override
     public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
 
         mLoadingIndicator.setVisibility(View.GONE);
 
         mAdapter.clearAdapter();
+
         if (movies != null && !movies.isEmpty()) {
             mAdapter.setMovieData(movies);
         }
@@ -110,15 +105,13 @@ public class MainActivity extends AppCompatActivity
         startDetailActivityIntent.putExtra("Clicked movie", movie);
 
         startActivity(startDetailActivityIntent);
-
-
     }
 
     public boolean checkConnectivity() {
-    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-    isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-    return isConnected;
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        return isConnected;
     }
 
     @Override
@@ -143,6 +136,7 @@ public class MainActivity extends AppCompatActivity
                     showNoConnection();
                 }
                 return true;
+
             case R.id.action_top_rated_movies:
 
                 mAdapter.clearAdapter();
@@ -158,12 +152,12 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void showLoadingIndicator(){
+    public void showLoadingIndicator() {
         mEmptyTextView.setVisibility(View.GONE);
         mLoadingIndicator.setVisibility(View.VISIBLE);
     }
 
-    public void showNoConnection(){
+    public void showNoConnection() {
         mLoadingIndicator.setVisibility(View.GONE);
         mEmptyTextView.setVisibility(View.VISIBLE);
         mEmptyTextView.setText(R.string.no_internet_connection);

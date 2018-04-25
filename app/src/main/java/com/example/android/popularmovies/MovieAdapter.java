@@ -5,28 +5,23 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+/**
+ * Picasso library is used to handle image loading and caching.
+ */
+
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
-    private static final String TAG = MovieAdapter.class.getSimpleName();
-    private List<Movie> mMovies;
-    private LayoutInflater mInflater;
-    private AdapterView.OnItemClickListener mItemClickListener;
-    private Context mContext;
-    private static  final String IMAGE_SIZE = "w185/";
+    private static final String IMAGE_SIZE = "w185/";
     private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
-
-    final private  GridItemClickListener mOnClickListener;
-
-    public interface GridItemClickListener {
-        void onGridItemClick(Movie clickedMovie);
-    }
+    final private GridItemClickListener mOnClickListener;
+    private List<Movie> mMovies;
+    private Context mContext;
 
     public MovieAdapter(Context context, List<Movie> movies, GridItemClickListener listener) {
         mContext = context;
@@ -36,7 +31,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        mInflater = LayoutInflater.from(mContext);
+        LayoutInflater mInflater = LayoutInflater.from(mContext);
         View view = mInflater.inflate(R.layout.recyclerview_item, parent, false);
         return new ViewHolder(view);
     }
@@ -54,6 +49,19 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         return mMovies.size();
     }
 
+    public void setMovieData(List<Movie> movies) {
+        mMovies = movies;
+        notifyDataSetChanged();
+    }
+
+    public void clearAdapter() {
+        mMovies.clear();
+        notifyDataSetChanged();
+    }
+
+    public interface GridItemClickListener {
+        void onGridItemClick(Movie clickedMovie);
+    }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView posterImageView;
@@ -71,16 +79,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
             Movie clickedMovie = mMovies.get(clickedPosition);
             mOnClickListener.onGridItemClick(clickedMovie);
         }
-    }
-
-    public void setMovieData(List<Movie> movies) {
-        mMovies = movies;
-        notifyDataSetChanged();
-    }
-
-    public void clearAdapter(){
-        mMovies.clear();
-        notifyDataSetChanged();
     }
 }
 

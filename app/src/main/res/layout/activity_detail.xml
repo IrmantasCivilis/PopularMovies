@@ -14,7 +14,7 @@
         android:layout_marginBottom="16dp">
 
         <TextView
-            android:id="@+id/title_label_tv"
+            android:id="@+id/title_label_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -26,7 +26,7 @@
             />
 
         <TextView
-            android:id="@+id/title_tv"
+            android:id="@+id/title_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -35,73 +35,73 @@
             android:layout_marginStart="16dp"
             android:fontFamily="sans-serif"
             android:textSize="16sp"
-            app:layout_constraintLeft_toRightOf="@id/poster_iv"
-            app:layout_constraintTop_toBottomOf="@id/title_label_tv"
+            app:layout_constraintLeft_toRightOf="@id/poster_image_view"
+            app:layout_constraintTop_toBottomOf="@id/title_label_text_view"
             tools:text="movie title"
             />
 
         <ImageView
-            android:id="@+id/poster_iv"
+            android:id="@+id/poster_image_view"
             android:layout_width="185dp"
             android:layout_height="270dp"
             android:adjustViewBounds="true"
             android:cropToPadding="false"
             android:scaleType="fitXY"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title_tv"
+            app:layout_constraintTop_toBottomOf="@id/title_text_view"
             android:layout_marginTop="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"/>
 
         <TextView
-            android:id="@+id/release_date_label_tv"
+            android:id="@+id/release_date_label_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="Release date:"
-            app:layout_constraintLeft_toRightOf="@id/poster_iv"
-            app:layout_constraintTop_toBottomOf="@id/title_tv"
+            app:layout_constraintLeft_toRightOf="@id/poster_image_view"
+            app:layout_constraintTop_toBottomOf="@id/title_text_view"
             />
 
         <TextView
-            android:id="@+id/release_date_tv"
+            android:id="@+id/release_date_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:fontFamily="sans-serif"
             android:textSize="16sp"
-            app:layout_constraintLeft_toRightOf="@id/poster_iv"
-            app:layout_constraintTop_toBottomOf="@id/release_date_label_tv"
+            app:layout_constraintLeft_toRightOf="@id/poster_image_view"
+            app:layout_constraintTop_toBottomOf="@id/release_date_label_text_view"
             tools:text="2018-04-20"/>
 
         <TextView
-            android:id="@+id/average_vote_label_tv"
+            android:id="@+id/average_vote_label_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="Average vote:"
-            app:layout_constraintLeft_toRightOf="@id/poster_iv"
-            app:layout_constraintTop_toBottomOf="@id/release_date_tv"/>
+            app:layout_constraintLeft_toRightOf="@id/poster_image_view"
+            app:layout_constraintTop_toBottomOf="@id/release_date_text_view"/>
 
         <TextView
-            android:id="@+id/average_vote_tv"
+            android:id="@+id/average_vote_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:fontFamily="sans-serif"
             android:textSize="16sp"
-            app:layout_constraintLeft_toRightOf="@id/poster_iv"
-            app:layout_constraintTop_toBottomOf="@id/average_vote_label_tv"
+            app:layout_constraintLeft_toRightOf="@id/poster_image_view"
+            app:layout_constraintTop_toBottomOf="@id/average_vote_label_text_view"
             tools:text="6.5"/>
 
         <TextView
-            android:id="@+id/overview_label_tv"
+            android:id="@+id/overview_label_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -109,10 +109,10 @@
             android:layout_marginTop="16dp"
             android:text="Overview:"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/poster_iv"/>
+            app:layout_constraintTop_toBottomOf="@id/poster_image_view"/>
 
         <TextView
-            android:id="@+id/overview_tv"
+            android:id="@+id/overview_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
@@ -123,7 +123,7 @@
             android:fontFamily="sans-serif"
             android:textSize="16sp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/overview_label_tv"
+            app:layout_constraintTop_toBottomOf="@id/overview_label_text_view"
             tools:text="overview"/>
 
     </android.support.constraint.ConstraintLayout>

@@ -5,7 +5,7 @@ import android.content.Context;
 
 import java.util.List;
 
-public class MovieLoader extends AsyncTaskLoader<List<Movie>>{
+public class MovieLoader extends AsyncTaskLoader<List<Movie>> {
 
     private String mUrl;
 

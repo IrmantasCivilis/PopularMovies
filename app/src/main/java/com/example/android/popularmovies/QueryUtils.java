@@ -129,10 +129,8 @@ public final class QueryUtils {
 
     public static List<Movie> fetchMovieData(String requestUrl) {
 
-        // Create URL object
         URL url = createUrl(requestUrl);
 
-        // Perform HTTP request to the URL and receive a JSON response back
         String jsonResponse = null;
         try {
             jsonResponse = makeHttpRequest(url);

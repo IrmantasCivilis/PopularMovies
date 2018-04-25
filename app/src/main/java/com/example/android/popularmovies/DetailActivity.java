@@ -19,11 +19,11 @@ public class DetailActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        ImageView mMoviePoster = findViewById(R.id.poster_iv);
-        TextView mTitle = findViewById(R.id.title_tv);
-        TextView mReleaseDate = findViewById(R.id.release_date_tv);
-        TextView mVoteAverage = findViewById(R.id.average_vote_tv);
-        TextView mOverview = findViewById(R.id.overview_tv);
+        ImageView mMoviePoster = findViewById(R.id.poster_image_view);
+        TextView mTitle = findViewById(R.id.title_text_view);
+        TextView mReleaseDate = findViewById(R.id.release_date_text_view);
+        TextView mVoteAverage = findViewById(R.id.average_vote_text_view);
+        TextView mOverview = findViewById(R.id.overview_text_view);
 
         Intent intentThatStartedThisActivity = getIntent();
 
