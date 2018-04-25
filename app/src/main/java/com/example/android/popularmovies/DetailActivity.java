@@ -11,11 +11,7 @@ import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity{
 
-    private ImageView mMoviePoster;
-    private TextView mTitleLabel, mTitle, mReleaseDateLabel, mReleaseDate, mVoteAverageLabel,
-    mVoteAverage, mOverviewLabel, mOverview;
-
-    private String imageSize = "w185/";
+    private static final String IMAGE_SIZE = "w185/";
     private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
 
     @Override
@@ -23,16 +19,11 @@ public class DetailActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-
-        mMoviePoster = findViewById(R.id.poster_iv);
-        mTitleLabel = findViewById(R.id.title_label_tv);
-        mTitle = findViewById(R.id.title_tv);
-        mReleaseDateLabel = findViewById(R.id.release_date_label_tv);
-        mReleaseDate = findViewById(R.id.release_date_tv);
-        mVoteAverageLabel = findViewById(R.id.average_vote_label_tv);
-        mVoteAverage = findViewById(R.id.average_vote_tv);
-        mOverviewLabel = findViewById(R.id.overview_label_tv);
-        mOverview = findViewById(R.id.overview_tv);
+        ImageView mMoviePoster = findViewById(R.id.poster_iv);
+        TextView mTitle = findViewById(R.id.title_tv);
+        TextView mReleaseDate = findViewById(R.id.release_date_tv);
+        TextView mVoteAverage = findViewById(R.id.average_vote_tv);
+        TextView mOverview = findViewById(R.id.overview_tv);
 
         Intent intentThatStartedThisActivity = getIntent();
 
@@ -41,9 +32,8 @@ public class DetailActivity extends AppCompatActivity{
         if (intentThatStartedThisActivity.hasExtra("Clicked movie")){
 
             String posterPath = movie.getString("Poster");
-
             Picasso.with(this)
-                    .load(BASE_IMAGE_URL + imageSize + posterPath)
+                    .load(BASE_IMAGE_URL + IMAGE_SIZE + posterPath)
                     .into(mMoviePoster);
 
             String movieTitle = movie.getString("Title");

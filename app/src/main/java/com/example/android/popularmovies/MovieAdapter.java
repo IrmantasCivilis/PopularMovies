@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -20,11 +19,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     private LayoutInflater mInflater;
     private AdapterView.OnItemClickListener mItemClickListener;
     private Context mContext;
-    private String imageSize = "w185/";
+    private static  final String IMAGE_SIZE = "w185/";
     private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
 
     final private  GridItemClickListener mOnClickListener;
-    private Toast mToast;
 
     public interface GridItemClickListener {
         void onGridItemClick(Movie clickedMovie);
@@ -47,7 +45,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     public void onBindViewHolder(MovieAdapter.ViewHolder holder, int position) {
 
         Picasso.with(mContext)
-                .load(BASE_IMAGE_URL + imageSize + mMovies.get(position).getPoster())
+                .load(BASE_IMAGE_URL + IMAGE_SIZE + mMovies.get(position).getPoster())
                 .into(holder.posterImageView);
     }
 
@@ -81,7 +79,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     }
 
     public void clearAdapter(){
-        //mMovies = movies;
         mMovies.clear();
         notifyDataSetChanged();
     }

@@ -1,8 +1,11 @@
 package com.example.android.popularmovies;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -48,22 +51,21 @@ public class MainActivity extends AppCompatActivity
         mEmptyTextView = findViewById(R.id.empty_text_view);
         mLoadingIndicator = findViewById(R.id.loading_indicator);
 
-        mEmptyTextView.setVisibility(View.GONE);
-        mLoadingIndicator.setVisibility(View.VISIBLE);
-
         mLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setHasFixedSize(true);
         mAdapter = new MovieAdapter(this, new ArrayList<Movie>(), this);
         recyclerView.setAdapter(mAdapter);
 
+        showLoadingIndicator();
         movieUrl = TMDB_REQUEST_URL + POPULAR + API_KEY;
-        //movieUrl = TMDB_REQUEST_URL + TOP_RATED + API_KEY;
 
+        if(checkConnectivity()){
         LoaderManager loaderManager = getLoaderManager();
         loaderManager.initLoader(MOVIE_LOADER_ID, null, MainActivity.this);
-
-
+        } else {
+            showNoConnection();
+        }
     }
 
     @Override
@@ -112,18 +114,12 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    //public boolean checkConnectivity() {
-    // ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-    //NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-    //isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-    //return isConnected;
-    //}
-    //TODO 2. Patobulinti UI, pridėti loadinimo indikatorių.
-    //TODO 3. Pagalvoti dėl landscape mode
-    //TODO 4. Strings, styles and other.
-    //TODO 5. onSaveInstance Negrįžta į aktivity
-    //TODO 6. connectivity check
-
+    public boolean checkConnectivity() {
+    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+    isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    return isConnected;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -137,14 +133,39 @@ public class MainActivity extends AppCompatActivity
 
         switch (item.getItemId()) {
             case R.id.action_popular_movies:
+
+                mAdapter.clearAdapter();
+                showLoadingIndicator();
                 movieUrl = TMDB_REQUEST_URL + POPULAR + API_KEY;
-                getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
+                if (checkConnectivity()) {
+                    getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
+                } else {
+                    showNoConnection();
+                }
                 return true;
             case R.id.action_top_rated_movies:
+
+                mAdapter.clearAdapter();
+                showLoadingIndicator();
                 movieUrl = TMDB_REQUEST_URL + TOP_RATED + API_KEY;
-                getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
+                if (checkConnectivity()) {
+                    getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
+                } else {
+                    showNoConnection();
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showLoadingIndicator(){
+        mEmptyTextView.setVisibility(View.GONE);
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+    }
+
+    public void showNoConnection(){
+        mLoadingIndicator.setVisibility(View.GONE);
+        mEmptyTextView.setVisibility(View.VISIBLE);
+        mEmptyTextView.setText(R.string.no_internet_connection);
     }
 }
