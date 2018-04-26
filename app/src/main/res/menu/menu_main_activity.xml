@@ -6,11 +6,11 @@
 
     <item
         android:id="@+id/action_popular_movies"
-        android:title="Popular movies"
+        android:title="@string/menu_option_popular_movies"
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_top_rated_movies"
-        android:title="Top rated movies"
+        android:title="@string/menu_option_top_rated"
         app:showAsAction="never"/>
 
 </menu>
