@@ -1,18 +1,38 @@
 package com.example.android.popularmovies;
 
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.content.Loader;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-public class DetailActivity extends AppCompatActivity{
+import java.util.ArrayList;
+import java.util.List;
+
+public class DetailActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<List<Trailer>>,
+        TrailerAdapter.TrailerListItemClickListener{
 
     private static final String IMAGE_SIZE = "w185/";
     private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
+
+    private static final String API_KEY = "";
+    private static final String TMDB_REQUEST_URL = "https://api.themoviedb.org/3/movie/";
+    private static final String VIDEOS = "/videos?";
+    private static final String TRAILER_REQUEST_URL = "https://www.youtube.com/watch?v=";
+
+    private static final int TRAILER_LOADER_ID = 2;
+    String videosUrl = "";
+    String trailerUrl = "";
+    TrailerAdapter mTrailerAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +71,58 @@ public class DetailActivity extends AppCompatActivity{
 
             String id = movie.getString("Id");
             mMovieId.setText(id);
+
+            RecyclerView trailerRecyclerView = findViewById(R.id.recycler_view_for_trailers);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+            trailerRecyclerView.setLayoutManager(mLayoutManager);
+            trailerRecyclerView.setHasFixedSize(true);
+            mTrailerAdapter = new TrailerAdapter(this, new ArrayList<Trailer>(), this);
+            trailerRecyclerView.setAdapter(mTrailerAdapter);
+
+            videosUrl = TMDB_REQUEST_URL + id + VIDEOS + API_KEY;
+            LoaderManager loaderManager = getLoaderManager();
+            loaderManager.initLoader(TRAILER_LOADER_ID, null, DetailActivity.this);
         }
+    }
+
+    @Override
+    public Loader<List<Trailer>> onCreateLoader(int i, Bundle bundle) {
+        return new TrailerLoader(this, videosUrl);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Trailer>> loader, List<Trailer> trailers) {
+
+        mTrailerAdapter.clearTrailerAdapter();
+
+        if (trailers != null && !trailers.isEmpty()) {
+            mTrailerAdapter.setTrailersData(trailers);
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Trailer>> loader) {
+
+        mTrailerAdapter.clearTrailerAdapter();
+
+    }
+
+    @Override
+    public void onTrailerListItemClick(Trailer clickedTrailer) {
+
+        String key = clickedTrailer.getTrailerKey();
+
+        trailerUrl = TRAILER_REQUEST_URL + key;
+
+        Uri trailer = Uri.parse(trailerUrl);
+
+        Intent videoIntent = new Intent(Intent.ACTION_VIEW, trailer);
+
+        if (videoIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(videoIntent);
+        }
+
+
     }
 }
