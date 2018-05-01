@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity
         String releaseDate = clickedMovie.getReleaseDate();
         String voteAverage = String.valueOf(clickedMovie.getVoteAverage());
         String overview = clickedMovie.getOverview();
+        String movieId = String.valueOf(clickedMovie.getId());
 
         Bundle movie = new Bundle();
         movie.putString("Poster", posterPath);
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity
         movie.putString("Date", releaseDate);
         movie.putString("Vote Average", voteAverage);
         movie.putString("Overview", overview);
+        movie.putString("Id", movieId);
 
         Intent startDetailActivityIntent = new Intent(MainActivity.this, DetailActivity.class);
         startDetailActivityIntent.putExtra("Clicked movie", movie);
@@ -148,6 +150,9 @@ public class MainActivity extends AppCompatActivity
                     showNoConnection();
                 }
                 return true;
+
+            case R.id.action_favorite_movies:
+
         }
         return super.onOptionsItemSelected(item);
     }

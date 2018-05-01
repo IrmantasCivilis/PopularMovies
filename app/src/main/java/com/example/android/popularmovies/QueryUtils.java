@@ -28,6 +28,11 @@ public final class QueryUtils {
     private static final String KEY_OVERVIEW = "overview";
     private static final String KEY_RELEASE_DATE = "release_date";
     private static final String KEY_VOTE_AVERAGE = "vote_average";
+    private static final String KEY_ID = "id";
+
+    //private static final String KEY_VIDEOS_RESULTS = "results";
+    private static final String KEY_KEY = "key";
+    private static final String KEY_NAME = "name";
 
     public QueryUtils() {
     }
@@ -52,8 +57,9 @@ public final class QueryUtils {
                 String releaseDate = currentMovie.getString(KEY_RELEASE_DATE);
                 String plotSynopsis = currentMovie.getString(KEY_OVERVIEW);
                 double voteAverage = currentMovie.getDouble(KEY_VOTE_AVERAGE);
+                int movieId = currentMovie.getInt(KEY_ID);
 
-                Movie movie = new Movie(moviePoster, movieTitle, releaseDate, plotSynopsis, voteAverage);
+                Movie movie = new Movie(moviePoster, movieTitle, releaseDate, plotSynopsis, voteAverage, movieId);
                 movies.add(movie);
             }
 
@@ -62,6 +68,32 @@ public final class QueryUtils {
 
         }
         return movies;
+    }
+
+    private static List<Trailer> extractTrailersFromJson(String videoJSON) {
+
+        if (TextUtils.isEmpty(videoJSON)) {
+            return null;
+        }
+
+        List<Trailer> trailers = new ArrayList<>();
+
+        try {
+            JSONObject baseJsonResponse = new JSONObject(videoJSON);
+            JSONArray trailersArray = baseJsonResponse.optJSONArray(KEY_RESULTS);
+
+            for (int i = 0; i < trailersArray.length(); i++) {
+                JSONObject currentTrailer = trailersArray.getJSONObject(i);
+                String trailerName = currentTrailer.getString(KEY_NAME);
+                String trailerKey = currentTrailer.getString(KEY_KEY);
+
+                Trailer trailer = new Trailer(trailerName, trailerKey);
+                trailers.add(trailer);
+            }
+        } catch (JSONException e) {
+            Log.e("QueryUtils", "Problem parsing movie JSON");
+        }
+        return trailers;
     }
 
     private static URL createUrl(String stringUrl) {
@@ -139,7 +171,20 @@ public final class QueryUtils {
         }
 
         return extractFeaturesFromJson(jsonResponse);
+    }
 
+    public static List<Trailer> fetchVideoData(String requestUrl) {
+
+        URL url = createUrl(requestUrl);
+
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Problem making the HTTP request.", e);
+        }
+
+        return extractTrailersFromJson(jsonResponse);
     }
 
 }

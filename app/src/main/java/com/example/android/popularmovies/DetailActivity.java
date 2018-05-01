@@ -24,6 +24,7 @@ public class DetailActivity extends AppCompatActivity{
         TextView mReleaseDate = findViewById(R.id.release_date_text_view);
         TextView mVoteAverage = findViewById(R.id.average_vote_text_view);
         TextView mOverview = findViewById(R.id.overview_text_view);
+        TextView mMovieId = findViewById(R.id.movie_id);
 
         Intent intentThatStartedThisActivity = getIntent();
 
@@ -47,6 +48,9 @@ public class DetailActivity extends AppCompatActivity{
 
             String overview = movie.getString("Overview");
             mOverview.setText(overview);
+
+            String id = movie.getString("Id");
+            mMovieId.setText(id);
         }
     }
 }

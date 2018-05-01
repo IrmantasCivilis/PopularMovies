@@ -62,6 +62,18 @@
             app:layout_constraintTop_toBottomOf="@id/average_vote_label_text_view"
             tools:text="6.5"/>
 
+        <ToggleButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="Add as favorite"
+            android:textOn="Remove from favorite"
+            style="?android:attr/starStyle"
+            app:layout_constraintLeft_toRightOf="@id/poster_image_view"
+            app:layout_constraintTop_toBottomOf="@id/average_vote_text_view"
+            android:layout_marginLeft="@dimen/margin"
+            android:layout_marginStart="@dimen/margin"
+            android:layout_marginTop="@dimen/margin"/>
+
         <TextView
             android:id="@+id/overview_label_text_view"
             style="@style/label_text_view"
@@ -72,10 +84,30 @@
         <TextView
             android:id="@+id/overview_text_view"
             style="@style/large_text_view"
-            android:paddingBottom="@dimen/bottom_padding"
+            android:maxLines="3"
+            android:ellipsize="end"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/overview_label_text_view"
             tools:text="overview"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/movie_id"
+            app:layout_constraintTop_toBottomOf="@id/overview_text_view"
+            app:layout_constraintLeft_toLeftOf="parent"
+            tools:text="id"
+            android:layout_marginLeft="@dimen/margin"
+            android:layout_marginStart="@dimen/margin"
+            android:layout_marginTop="@dimen/margin"
+            android:paddingBottom="@dimen/bottom_padding"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recycler_view_for_trailers"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/movie_id"/>
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
