@@ -30,9 +30,13 @@ public final class QueryUtils {
     private static final String KEY_VOTE_AVERAGE = "vote_average";
     private static final String KEY_ID = "id";
 
-    //private static final String KEY_VIDEOS_RESULTS = "results";
+    // Trailers keys
     private static final String KEY_KEY = "key";
     private static final String KEY_NAME = "name";
+
+    // Reviews keys
+    private static final String KEY_AUTHOR = "author";
+    private static final String KEY_URL = "url";
 
     public QueryUtils() {
     }
@@ -94,6 +98,30 @@ public final class QueryUtils {
             Log.e("QueryUtils", "Problem parsing movie JSON");
         }
         return trailers;
+    }
+
+    private static List<Review> extractReviewsFromJson(String reviewJSON) {
+        if (TextUtils.isEmpty(reviewJSON)){
+            return null;
+        }
+        List<Review> reviews = new ArrayList<>();
+
+        try {
+            JSONObject baseJsonResponse = new JSONObject(reviewJSON);
+            JSONArray reviewsArray = baseJsonResponse.optJSONArray(KEY_RESULTS);
+
+            for (int i = 0; i < reviewsArray.length(); i++) {
+                JSONObject currentReview = reviewsArray.getJSONObject(i);
+                String reviewAuthor = currentReview.getString(KEY_AUTHOR);
+                String reviewUrl = currentReview.getString(KEY_URL);
+
+                Review review = new Review(reviewAuthor, reviewUrl);
+                reviews.add(review);
+            }
+        } catch (JSONException e) {
+            Log.e("QueryUtils", "Problem parsing movie JSON");
+        }
+        return reviews;
     }
 
     private static URL createUrl(String stringUrl) {
@@ -185,6 +213,18 @@ public final class QueryUtils {
         }
 
         return extractTrailersFromJson(jsonResponse);
+    }
+
+    public static List<Review> fetchReviewsData(String requestUrl) {
+
+        URL url = createUrl(requestUrl);
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Problem making the HTTP request.", e);
+        }
+        return extractReviewsFromJson(jsonResponse);
     }
 
 }

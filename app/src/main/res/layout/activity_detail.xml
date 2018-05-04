@@ -63,16 +63,16 @@
             tools:text="6.5"/>
 
         <ToggleButton
+            style="?android:attr/starStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textOff="Add as favorite"
-            android:textOn="Remove from favorite"
-            style="?android:attr/starStyle"
-            app:layout_constraintLeft_toRightOf="@id/poster_image_view"
-            app:layout_constraintTop_toBottomOf="@id/average_vote_text_view"
             android:layout_marginLeft="@dimen/margin"
             android:layout_marginStart="@dimen/margin"
-            android:layout_marginTop="@dimen/margin"/>
+            android:layout_marginTop="@dimen/margin"
+            android:textOff="Add as favorite"
+            android:textOn="Remove from favorite"
+            app:layout_constraintLeft_toRightOf="@id/poster_image_view"
+            app:layout_constraintTop_toBottomOf="@id/average_vote_text_view"/>
 
         <TextView
             android:id="@+id/overview_label_text_view"
@@ -91,27 +91,52 @@
             tools:text="overview"/>
 
         <TextView
+            android:id="@+id/trailer_label_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/movie_id"
-            app:layout_constraintTop_toBottomOf="@id/overview_text_view"
-            app:layout_constraintLeft_toLeftOf="parent"
-            tools:text="id"
             android:layout_marginLeft="@dimen/margin"
             android:layout_marginStart="@dimen/margin"
             android:layout_marginTop="@dimen/margin"
-            android:paddingBottom="@dimen/bottom_padding"/>
+            android:paddingBottom="@dimen/bottom_padding"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/overview_text_view"
+            android:text="Trailers:"
+            android:textSize="@dimen/text_size"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_for_trailers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin"
+            android:layout_marginLeft="@dimen/margin"
+            android:layout_marginRight="@dimen/margin"
+            android:layout_marginStart="@dimen/margin"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/trailer_label_text_view"/>
+
+        <TextView
+            android:id="@+id/review_label_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin"
+            android:layout_marginStart="@dimen/margin"
+            android:layout_marginTop="@dimen/margin"
+            android:paddingBottom="@dimen/bottom_padding"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recycler_view_for_trailers"
+            android:text="Reviews:"
+            android:textSize="@dimen/text_size"/>
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/recycler_view_for_trailers"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/movie_id"
-            android:layout_marginLeft="@dimen/margin"
-            android:layout_marginStart="@dimen/margin"
+            android:id="@+id/recycler_view_for_reviews"
             android:layout_marginEnd="@dimen/margin"
-            android:layout_marginRight="@dimen/margin"/>
+            android:layout_marginLeft="@dimen/margin"
+            android:layout_marginRight="@dimen/margin"
+            android:layout_marginStart="@dimen/margin"
+            app:layout_constraintTop_toBottomOf="@+id/review_label_text_view"
+            app:layout_constraintLeft_toLeftOf="parent"/>
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

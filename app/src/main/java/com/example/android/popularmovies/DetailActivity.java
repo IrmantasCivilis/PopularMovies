@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,7 +20,8 @@ import java.util.List;
 
 public class DetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<List<Trailer>>,
-        TrailerAdapter.TrailerListItemClickListener{
+        TrailerAdapter.TrailerListItemClickListener,
+        ReviewAdapter.ReviewListItemClickListener {
 
     private static final String IMAGE_SIZE = "w185/";
     private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
@@ -28,11 +30,17 @@ public class DetailActivity extends AppCompatActivity
     private static final String TMDB_REQUEST_URL = "https://api.themoviedb.org/3/movie/";
     private static final String VIDEOS = "/videos?";
     private static final String TRAILER_REQUEST_URL = "https://www.youtube.com/watch?v=";
+    private static final String REVIEWS = "/reviews?";
 
     private static final int TRAILER_LOADER_ID = 2;
+    private static final int REVIEW_LOADER_ID = 3;
     String videosUrl = "";
     String trailerUrl = "";
+    String reviewsUrl = "";
     TrailerAdapter mTrailerAdapter;
+    ReviewAdapter mReviewAdapter;
+
+    Boolean isOverviewClicked = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,8 +51,20 @@ public class DetailActivity extends AppCompatActivity
         TextView mTitle = findViewById(R.id.title_text_view);
         TextView mReleaseDate = findViewById(R.id.release_date_text_view);
         TextView mVoteAverage = findViewById(R.id.average_vote_text_view);
-        TextView mOverview = findViewById(R.id.overview_text_view);
-        TextView mMovieId = findViewById(R.id.movie_id);
+        final TextView mOverview = findViewById(R.id.overview_text_view);
+        //TextView mMovieId = findViewById(R.id.movie_id);
+        mOverview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isOverviewClicked) {
+                    mOverview.setMaxLines(3);
+                    isOverviewClicked = false;
+                } else {
+                    mOverview.setMaxLines(Integer.MAX_VALUE);
+                    isOverviewClicked = true;
+                }
+            }
+        });
 
         Intent intentThatStartedThisActivity = getIntent();
 
@@ -70,18 +90,29 @@ public class DetailActivity extends AppCompatActivity
             mOverview.setText(overview);
 
             String id = movie.getString("Id");
-            mMovieId.setText(id);
+            //mMovieId.setText(id);
 
             RecyclerView trailerRecyclerView = findViewById(R.id.recycler_view_for_trailers);
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-            trailerRecyclerView.setLayoutManager(mLayoutManager);
+            RecyclerView.LayoutManager mTrailerLayoutManager = new LinearLayoutManager(this);
+            trailerRecyclerView.setLayoutManager(mTrailerLayoutManager);
             trailerRecyclerView.setHasFixedSize(true);
             mTrailerAdapter = new TrailerAdapter(this, new ArrayList<Trailer>(), this);
             trailerRecyclerView.setAdapter(mTrailerAdapter);
 
+            RecyclerView reviewRecyclerView = findViewById(R.id.recycler_view_for_reviews);
+            RecyclerView.LayoutManager mReviewLayoutManager = new LinearLayoutManager(this);
+            reviewRecyclerView.setLayoutManager(mReviewLayoutManager);
+            reviewRecyclerView.setHasFixedSize(true);
+            mReviewAdapter = new ReviewAdapter(this, new ArrayList<Review>(), this);
+            reviewRecyclerView.setAdapter(mReviewAdapter);
+
             videosUrl = TMDB_REQUEST_URL + id + VIDEOS + API_KEY;
+            reviewsUrl = TMDB_REQUEST_URL + id + REVIEWS + API_KEY;
+
             LoaderManager loaderManager = getLoaderManager();
             loaderManager.initLoader(TRAILER_LOADER_ID, null, DetailActivity.this);
+            loaderManager.initLoader(REVIEW_LOADER_ID, null,DetailActivity.this);
+
         }
     }
 
@@ -122,7 +153,20 @@ public class DetailActivity extends AppCompatActivity
         if (videoIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(videoIntent);
         }
+    }
 
 
+    @Override
+    public void onReviewListItemClick(Review clickedReview) {
+
+        String reviewUrl = clickedReview.getReviewUrl();
+
+        Uri review = Uri.parse(reviewUrl);
+
+        Intent reviewIntent = new Intent(Intent.ACTION_VIEW, review);
+
+        if (reviewIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(reviewIntent);
+        }
     }
 }

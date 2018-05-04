@@ -3,10 +3,19 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="wrap_content">
-    <TextView
+
+        <TextView
+            android:id="@+id/trailer_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            tools:text="Trailer 1"
+            android:drawableStart="@drawable/ic_play_arrow_black_24dp"
+            android:drawablePadding="@dimen/margin"/>
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        tools:text="Trailer 1"
-        android:id="@+id/trailer_text_view"/>
+        android:layout_height="1dp"
+        android:background="#9E9E9E"/>
 
 </FrameLayout>
