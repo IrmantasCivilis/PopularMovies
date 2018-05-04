@@ -18,10 +18,15 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<List<Trailer>>,
-        TrailerAdapter.TrailerListItemClickListener,
-        ReviewAdapter.ReviewListItemClickListener {
+//public class DetailActivity extends AppCompatActivity
+//        implements LoaderManager.LoaderCallbacks<List<Trailer>>,
+//        TrailerAdapter.TrailerListItemClickListener,
+//        ReviewAdapter.ReviewListItemClickListener {
+
+    public class DetailActivity extends AppCompatActivity
+            implements LoaderManager.LoaderCallbacks,
+            TrailerAdapter.TrailerListItemClickListener,
+            ReviewAdapter.ReviewListItemClickListener {
 
     private static final String IMAGE_SIZE = "w185/";
     private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
@@ -116,28 +121,27 @@ public class DetailActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public Loader<List<Trailer>> onCreateLoader(int i, Bundle bundle) {
-        return new TrailerLoader(this, videosUrl);
-    }
+    //@Override
+    //public Loader<List<Trailer>> onCreateLoader(int i, Bundle bundle) {
+    //    return new TrailerLoader(this, videosUrl);
+    //}
 
-    @Override
-    public void onLoadFinished(Loader<List<Trailer>> loader, List<Trailer> trailers) {
+    //@Override
+    //public void onLoadFinished(Loader<List<Trailer>> loader, List<Trailer> trailers) {
 
-        mTrailerAdapter.clearTrailerAdapter();
+       // mTrailerAdapter.clearTrailerAdapter();
 
-        if (trailers != null && !trailers.isEmpty()) {
-            mTrailerAdapter.setTrailersData(trailers);
-        }
+        //if (trailers != null && !trailers.isEmpty()) {
+        //    mTrailerAdapter.setTrailersData(trailers);
+        //}
 
-    }
+    //}
 
-    @Override
-    public void onLoaderReset(Loader<List<Trailer>> loader) {
+    //@Override
+    //public void onLoaderReset(Loader<List<Trailer>> loader) {
 
-        mTrailerAdapter.clearTrailerAdapter();
-
-    }
+     //   mTrailerAdapter.clearTrailerAdapter();
+     //   }
 
     @Override
     public void onTrailerListItemClick(Trailer clickedTrailer) {
@@ -169,4 +173,44 @@ public class DetailActivity extends AppCompatActivity
             startActivity(reviewIntent);
         }
     }
-}
+
+        @Override
+        public Loader onCreateLoader(int i, Bundle bundle) {
+           if (i == TRAILER_LOADER_ID) {
+               return new TrailerLoader(this, videosUrl);
+           } else if(i == REVIEW_LOADER_ID) {
+               return new ReviewLoader(this, reviewsUrl);
+           }
+           return null;
+        }
+
+        @Override
+        public void onLoadFinished(Loader loader, Object o) {
+
+            int loaderId = loader.getId();
+            if (loaderId == TRAILER_LOADER_ID) {
+                mTrailerAdapter.clearTrailerAdapter();
+
+                if ((List<Trailer>) o != null) {
+                    mTrailerAdapter.setTrailersData((List<Trailer>) o);
+                }
+
+            } else if (loaderId == REVIEW_LOADER_ID) {
+                mReviewAdapter.clearReviewAdapter();
+                if ((List<Review>) o != null) {
+                    mReviewAdapter.setReviewsData((List<Review>) o);
+                }
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader loader) {
+
+        int loaderId = loader.getId();
+        if (loaderId == TRAILER_LOADER_ID) {
+            mTrailerAdapter.clearTrailerAdapter();
+        } else if (loaderId == REVIEW_LOADER_ID) {
+            mReviewAdapter.clearReviewAdapter();
+        }
+        }
+    }
