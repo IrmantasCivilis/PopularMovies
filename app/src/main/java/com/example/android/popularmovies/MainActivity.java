@@ -4,6 +4,8 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -15,6 +17,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.example.android.popularmovies.data.FavoriteContract.FavoriteEntry;
+import com.example.android.popularmovies.data.FavoriteDbHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +41,9 @@ public class MainActivity extends AppCompatActivity
     Boolean isConnected;
     TextView mEmptyTextView;
     ProgressBar mLoadingIndicator;
+
+    private SQLiteDatabase mDb;
+    Cursor mCursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +69,11 @@ public class MainActivity extends AppCompatActivity
         } else {
             showNoConnection();
         }
+
+        FavoriteDbHelper dbHelper = new FavoriteDbHelper(this);
+        mDb = dbHelper.getWritableDatabase();
+        mCursor = getAllFavoriteMovies();
+
     }
 
     @Override
@@ -153,6 +166,12 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.action_favorite_movies:
 
+                mAdapter.clearAdapter();
+                if (mCursor.getCount() == 0) {
+                    mEmptyTextView.setVisibility(View.VISIBLE);
+                    mEmptyTextView.setText("Favorite Movies database is empty");
+                }
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -166,5 +185,17 @@ public class MainActivity extends AppCompatActivity
         mLoadingIndicator.setVisibility(View.GONE);
         mEmptyTextView.setVisibility(View.VISIBLE);
         mEmptyTextView.setText(R.string.no_internet_connection);
+    }
+
+    private Cursor getAllFavoriteMovies() {
+        return mDb.query(
+                FavoriteEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                FavoriteEntry._ID
+        );
     }
 }

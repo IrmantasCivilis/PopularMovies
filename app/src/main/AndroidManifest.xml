@@ -29,6 +29,12 @@
                 android:value=".MainActivity"/>
         </activity>
 
+        <provider
+            android:name=".data.FavoriteProvider"
+            android:authorities="com.example.android.popularmovies"
+            android:exported="false"
+            android:grantUriPermissions="true"/>
+
     </application>
 
 </manifest>
