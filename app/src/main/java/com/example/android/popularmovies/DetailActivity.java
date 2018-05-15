@@ -1,6 +1,7 @@
 package com.example.android.popularmovies;
 
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Loader;
 import android.net.Uri;
@@ -10,9 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.widget.ToggleButton;
+import com.example.android.popularmovies.data.FavoriteContract;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -52,11 +55,44 @@ import java.util.List;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        ImageView mMoviePoster = findViewById(R.id.poster_image_view);
-        TextView mTitle = findViewById(R.id.title_text_view);
-        TextView mReleaseDate = findViewById(R.id.release_date_text_view);
-        TextView mVoteAverage = findViewById(R.id.average_vote_text_view);
+        final ImageView mMoviePoster = findViewById(R.id.poster_image_view);
+        final TextView mTitle = findViewById(R.id.title_text_view);
+        final TextView mReleaseDate = findViewById(R.id.release_date_text_view);
+        final TextView mVoteAverage = findViewById(R.id.average_vote_text_view);
         final TextView mOverview = findViewById(R.id.overview_text_view);
+
+        ToggleButton toggleButton = findViewById(R.id.favorite_star_button);
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+
+                    String movieTitle = mTitle.getText().toString();
+                    String releaseDate = mReleaseDate.getText().toString();
+                    String voteAverage = mVoteAverage.getText().toString();
+                    String overview = mOverview.getText().toString();
+
+                    Intent intentThatStartedThisActivity = getIntent();
+                    Bundle movie = intentThatStartedThisActivity.getBundleExtra("Clicked movie");
+                    String moviePoster = movie.getString("Poster");
+                    int movieId = Integer.valueOf(movie.getString("Id"));
+
+                    ContentValues values = new ContentValues();
+                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_POSTER, moviePoster);
+                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_TITLE, movieTitle);
+                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_RELEASE_DATE, releaseDate);
+                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_AVERAGE_VOTE, voteAverage);
+                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_OVERVIEW, overview);
+                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_ID, movieId);
+
+                    getContentResolver().insert(FavoriteContract.FavoriteEntry.CONTENT_URI, values);
+
+                } else {
+
+                }
+            }
+        });
+
         //TextView mMovieId = findViewById(R.id.movie_id);
         mOverview.setOnClickListener(new View.OnClickListener() {
             @Override

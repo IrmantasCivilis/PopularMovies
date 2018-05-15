@@ -46,7 +46,7 @@ public class FavoriteProvider extends ContentProvider {
         switch (match) {
 
             case MOVIES:
-                returnCursor =  db.query(FavoriteEntry.TABLE_NAME,
+                returnCursor = db.query(FavoriteEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,

@@ -2,6 +2,7 @@ package com.example.android.popularmovies;
 
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -15,22 +16,23 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.data.FavoriteContract.FavoriteEntry;
-import com.example.android.popularmovies.data.FavoriteDbHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<List<Movie>>,
+        implements LoaderManager.LoaderCallbacks,
         MovieAdapter.GridItemClickListener {
 
     public static final String LOG_TAG = MainActivity.class.getName();
     private static final int MOVIE_LOADER_ID = 1;
+    private static final int CURSOR_LOADER_ID = 4;
     private static final String API_KEY = "";
     private static final String TMDB_REQUEST_URL = "https://api.themoviedb.org/3/movie/";
     private static final String POPULAR = "popular?";
@@ -38,27 +40,30 @@ public class MainActivity extends AppCompatActivity
 
     String movieUrl = "";
     MovieAdapter mAdapter;
+    FavoriteCursorAdapter mCursorAdapter;
     Boolean isConnected;
     TextView mEmptyTextView;
     ProgressBar mLoadingIndicator;
-
-    private SQLiteDatabase mDb;
+    RecyclerView mRecyclerView;
+    ListView mListView;
     Cursor mCursor;
+    private SQLiteDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        mRecyclerView = findViewById(R.id.recycler_view);
         mEmptyTextView = findViewById(R.id.empty_text_view);
         mLoadingIndicator = findViewById(R.id.loading_indicator);
+        mListView = findViewById(R.id.list_view);
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setHasFixedSize(true);
         mAdapter = new MovieAdapter(this, new ArrayList<Movie>(), this);
-        recyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
 
         showLoadingIndicator();
         movieUrl = TMDB_REQUEST_URL + POPULAR + API_KEY;
@@ -70,32 +75,61 @@ public class MainActivity extends AppCompatActivity
             showNoConnection();
         }
 
-        FavoriteDbHelper dbHelper = new FavoriteDbHelper(this);
-        mDb = dbHelper.getWritableDatabase();
-        mCursor = getAllFavoriteMovies();
+        //FavoriteDbHelper dbHelper = new FavoriteDbHelper(this);
+        //mDb = dbHelper.getReadableDatabase();
+        //mCursor = getAllFavoriteMovies();
 
     }
 
     @Override
-    public Loader<List<Movie>> onCreateLoader(int i, Bundle bundle) {
-        return new MovieLoader(this, movieUrl);
+    public Loader onCreateLoader(int i, Bundle bundle) {
+        if (i == MOVIE_LOADER_ID) {
+            return new MovieLoader(this, movieUrl);
+        } else if (i == CURSOR_LOADER_ID) {
+            String[] projection = {FavoriteEntry._ID,
+                    FavoriteEntry.COLUMN_MOVIE_POSTER,
+                    FavoriteEntry.COLUMN_MOVIE_TITLE,
+                    FavoriteEntry.COLUMN_MOVIE_RELEASE_DATE,
+                    FavoriteEntry.COLUMN_MOVIE_AVERAGE_VOTE,
+                    FavoriteEntry.COLUMN_MOVIE_OVERVIEW,
+                    FavoriteEntry.COLUMN_MOVIE_ID};
+
+            return new CursorLoader(this,
+                    FavoriteEntry.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
+        }
+        return null;
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
+    public void onLoadFinished(Loader loader, Object o) {
 
         mLoadingIndicator.setVisibility(View.GONE);
 
-        mAdapter.clearAdapter();
+        int loaderId = loader.getId();
+        if (loaderId == MOVIE_LOADER_ID) {
+            mAdapter.clearAdapter();
 
-        if (movies != null && !movies.isEmpty()) {
-            mAdapter.setMovieData(movies);
+            if ((List<Movie>) o != null) {
+                mAdapter.setMovieData((List<Movie>) o);
+            }
+        } else if (loaderId == CURSOR_LOADER_ID) {
+
+            mCursorAdapter.swapCursor((Cursor) o);
         }
     }
 
     @Override
     public void onLoaderReset(Loader loader) {
-        mAdapter.clearAdapter();
+        int loaderId = loader.getId();
+        if (loaderId == MOVIE_LOADER_ID) {
+            mAdapter.clearAdapter();
+        } else if (loaderId == CURSOR_LOADER_ID) {
+            mCursorAdapter.swapCursor(null);
+        }
     }
 
     @Override
@@ -167,10 +201,17 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_favorite_movies:
 
                 mAdapter.clearAdapter();
-                if (mCursor.getCount() == 0) {
-                    mEmptyTextView.setVisibility(View.VISIBLE);
-                    mEmptyTextView.setText("Favorite Movies database is empty");
-                }
+                FavoriteCursorAdapter cursorAdapter = new FavoriteCursorAdapter(this, null);
+                mListView.setAdapter(cursorAdapter);
+                getLoaderManager().initLoader(CURSOR_LOADER_ID, null,MainActivity.this);
+
+                //if (mCursor.getCount() == 0) {
+                //    mEmptyTextView.setVisibility(View.VISIBLE);
+                //    mEmptyTextView.setText("Favorite Movies database is empty");
+                //} else {
+
+                //}
+                return true;
 
         }
         return super.onOptionsItemSelected(item);
@@ -188,11 +229,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private Cursor getAllFavoriteMovies() {
-        return mDb.query(
-                FavoriteEntry.TABLE_NAME,
-                null,
-                null,
-                null,
+
+        String[] projection = {FavoriteEntry._ID, FavoriteEntry.COLUMN_MOVIE_TITLE};
+
+        return getContentResolver().query(
+                FavoriteEntry.CONTENT_URI,
+                projection,
                 null,
                 null,
                 FavoriteEntry._ID
