@@ -1,12 +1,13 @@
 package com.example.android.popularmovies.data;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 public class FavoriteContract {
 
     public static final String AUTHORITY = "com.example.android.popularmovies";
 
-    public static final android.net.Uri BASE_CONTENT_URI = android.net.Uri.parse("content://" + AUTHORITY);
+    public static final android.net.Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
     public static final String PATH_FAVORITE_MOVIES = "favoriteMovies";
 

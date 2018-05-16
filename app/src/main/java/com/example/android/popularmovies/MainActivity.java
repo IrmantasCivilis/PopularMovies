@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity
     public static final String LOG_TAG = MainActivity.class.getName();
     private static final int MOVIE_LOADER_ID = 1;
     private static final int CURSOR_LOADER_ID = 4;
-    private static final String API_KEY = "api_key=2f059ae774dbbac544f51f038a3644c8";
+    private static final String API_KEY = "";
     private static final String TMDB_REQUEST_URL = "https://api.themoviedb.org/3/movie/";
     private static final String POPULAR = "popular?";
     private static final String TOP_RATED = "top_rated?";
@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity
             showNoConnection();
         }
 
+        mCursorAdapter = new FavoriteCursorAdapter(this, null);
+        mListView.setAdapter(mCursorAdapter);
         //FavoriteDbHelper dbHelper = new FavoriteDbHelper(this);
         //mDb = dbHelper.getReadableDatabase();
         //mCursor = getAllFavoriteMovies();
@@ -118,11 +120,12 @@ public class MainActivity extends AppCompatActivity
             }
         } else if (loaderId == CURSOR_LOADER_ID) {
 
-            if ( o == null) {
+            mCursor = (Cursor) o;
+            if ( mCursor.getCount() == 0) {
                 mEmptyTextView.setVisibility(View.VISIBLE);
                 mEmptyTextView.setText("Favorite Movies database is empty");
             } else {
-                mCursorAdapter.swapCursor((Cursor) o);
+                mCursorAdapter.swapCursor(mCursor);
             }
         }
     }
@@ -182,6 +185,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_popular_movies:
 
                 mAdapter.clearAdapter();
+                mCursorAdapter.swapCursor(null);
                 showLoadingIndicator();
                 movieUrl = TMDB_REQUEST_URL + POPULAR + API_KEY;
                 if (checkConnectivity()) {
@@ -194,6 +198,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_top_rated_movies:
 
                 mAdapter.clearAdapter();
+                mCursorAdapter.swapCursor(null);
                 showLoadingIndicator();
                 movieUrl = TMDB_REQUEST_URL + TOP_RATED + API_KEY;
                 if (checkConnectivity()) {
@@ -206,8 +211,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_favorite_movies:
 
                 mAdapter.clearAdapter();
-                FavoriteCursorAdapter cursorAdapter = new FavoriteCursorAdapter(this, null);
-                mListView.setAdapter(cursorAdapter);
                 getLoaderManager().restartLoader(CURSOR_LOADER_ID, null,MainActivity.this);
 
                 //if (mCursor.getCount() == 0) {

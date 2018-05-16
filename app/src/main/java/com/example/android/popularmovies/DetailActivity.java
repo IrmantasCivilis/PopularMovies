@@ -35,7 +35,7 @@ import java.util.List;
     private static final String IMAGE_SIZE = "w185/";
     private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
 
-    private static final String API_KEY = "api_key=2f059ae774dbbac544f51f038a3644c8";
+    private static final String API_KEY = "";
     private static final String TMDB_REQUEST_URL = "https://api.themoviedb.org/3/movie/";
     private static final String VIDEOS = "/videos?";
     private static final String TRAILER_REQUEST_URL = "https://www.youtube.com/watch?v=";
@@ -86,9 +86,13 @@ import java.util.List;
                     values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_OVERVIEW, overview);
                     values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_ID, movieId);
 
-                    getContentResolver().insert(FavoriteContract.FavoriteEntry.CONTENT_URI, values);
+                    Uri newUri = getContentResolver().insert(FavoriteContract.FavoriteEntry.CONTENT_URI, values);
 
-                    Toast.makeText(DetailActivity.this, "Added to favorite", Toast.LENGTH_SHORT).show();
+                    if (newUri == null){
+                        Toast.makeText(DetailActivity.this, "Error with adding to favorites",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(DetailActivity.this, "Added to favorite", Toast.LENGTH_SHORT).show();
+                    }
 
                 } else {
 
