@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity
     public static final String LOG_TAG = MainActivity.class.getName();
     private static final int MOVIE_LOADER_ID = 1;
     private static final int CURSOR_LOADER_ID = 4;
-    private static final String API_KEY = "";
+    private static final String API_KEY = "api_key=2f059ae774dbbac544f51f038a3644c8";
     private static final String TMDB_REQUEST_URL = "https://api.themoviedb.org/3/movie/";
     private static final String POPULAR = "popular?";
     private static final String TOP_RATED = "top_rated?";
@@ -113,12 +113,17 @@ public class MainActivity extends AppCompatActivity
         if (loaderId == MOVIE_LOADER_ID) {
             mAdapter.clearAdapter();
 
-            if ((List<Movie>) o != null) {
+            if ( o != null) {
                 mAdapter.setMovieData((List<Movie>) o);
             }
         } else if (loaderId == CURSOR_LOADER_ID) {
 
-            mCursorAdapter.swapCursor((Cursor) o);
+            if ( o == null) {
+                mEmptyTextView.setVisibility(View.VISIBLE);
+                mEmptyTextView.setText("Favorite Movies database is empty");
+            } else {
+                mCursorAdapter.swapCursor((Cursor) o);
+            }
         }
     }
 
@@ -203,7 +208,7 @@ public class MainActivity extends AppCompatActivity
                 mAdapter.clearAdapter();
                 FavoriteCursorAdapter cursorAdapter = new FavoriteCursorAdapter(this, null);
                 mListView.setAdapter(cursorAdapter);
-                getLoaderManager().initLoader(CURSOR_LOADER_ID, null,MainActivity.this);
+                getLoaderManager().restartLoader(CURSOR_LOADER_ID, null,MainActivity.this);
 
                 //if (mCursor.getCount() == 0) {
                 //    mEmptyTextView.setVisibility(View.VISIBLE);
