@@ -63,15 +63,15 @@
             tools:text="6.5"/>
 
         <ToggleButton
-            style="?android:attr/starStyle"
             android:id="@+id/favorite_star_button"
+            style="?android:attr/starStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin"
             android:layout_marginStart="@dimen/margin"
             android:layout_marginTop="@dimen/margin"
-            android:textOff="Add as favorite"
-            android:textOn="Remove from favorite"
+            android:textOff="@string/favorite_button"
+            android:textOn="@string/favorite_button_unmake"
             app:layout_constraintLeft_toRightOf="@id/poster_image_view"
             app:layout_constraintTop_toBottomOf="@id/average_vote_text_view"/>
 
@@ -85,59 +85,37 @@
         <TextView
             android:id="@+id/overview_text_view"
             style="@style/large_text_view"
-            android:maxLines="3"
             android:ellipsize="end"
+            android:maxLines="3"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/overview_label_text_view"
             tools:text="overview"/>
 
         <TextView
             android:id="@+id/trailer_label_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin"
-            android:layout_marginStart="@dimen/margin"
-            android:layout_marginTop="@dimen/margin"
-            android:paddingBottom="@dimen/bottom_padding"
+            style="@style/trailers_and_reviews_label"
+            android:text="@string/label_trailers"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/overview_text_view"
-            android:text="Trailers:"
-            android:textSize="@dimen/text_size"/>
+            app:layout_constraintTop_toBottomOf="@id/overview_text_view"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view_for_trailers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin"
-            android:layout_marginLeft="@dimen/margin"
-            android:layout_marginRight="@dimen/margin"
-            android:layout_marginStart="@dimen/margin"
+            style="@style/recyclerview_for_details"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/trailer_label_text_view"/>
 
         <TextView
             android:id="@+id/review_label_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin"
-            android:layout_marginStart="@dimen/margin"
-            android:layout_marginTop="@dimen/margin"
-            android:paddingBottom="@dimen/bottom_padding"
+            style="@style/trailers_and_reviews_label"
+            android:text="@string/label_reviews"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recycler_view_for_trailers"
-            android:text="Reviews:"
-            android:textSize="@dimen/text_size"/>
+            app:layout_constraintTop_toBottomOf="@id/recycler_view_for_trailers"/>
 
         <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/recycler_view_for_reviews"
-            android:layout_marginEnd="@dimen/margin"
-            android:layout_marginLeft="@dimen/margin"
-            android:layout_marginRight="@dimen/margin"
-            android:layout_marginStart="@dimen/margin"
-            app:layout_constraintTop_toBottomOf="@+id/review_label_text_view"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+            style="@style/recyclerview_for_details"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/review_label_text_view"/>
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

@@ -6,7 +6,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -21,7 +20,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.popularmovies.adapters.FavoriteCursorAdapter;
+import com.example.android.popularmovies.adapters.MovieAdapter;
+import com.example.android.popularmovies.customclasses.Movie;
 import com.example.android.popularmovies.data.FavoriteContract.FavoriteEntry;
+import com.example.android.popularmovies.loaders.MovieLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,13 +51,11 @@ public class MainActivity extends AppCompatActivity
     RecyclerView mRecyclerView;
     ListView mListView;
     Cursor mCursor;
-    private SQLiteDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mEmptyTextView = findViewById(R.id.empty_text_view);
@@ -110,15 +111,15 @@ public class MainActivity extends AppCompatActivity
         if (loaderId == MOVIE_LOADER_ID) {
             mAdapter.clearAdapter();
 
-            if ( o != null) {
+            if (o != null) {
                 mAdapter.setMovieData((List<Movie>) o);
             }
         } else if (loaderId == CURSOR_LOADER_ID) {
 
             mCursor = (Cursor) o;
-            if ( mCursor.getCount() == 0) {
+            if (mCursor.getCount() == 0) {
                 mEmptyTextView.setVisibility(View.VISIBLE);
-                mEmptyTextView.setText("Favorite Movies database is empty");
+                mEmptyTextView.setText(R.string.empty_db_message);
             } else {
                 mCursorAdapter.swapCursor(mCursor);
             }
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity
                 movieUrl = TMDB_REQUEST_URL + POPULAR + API_KEY;
                 if (checkConnectivity()) {
                     getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
-                    setTitle("Popular Movies");
+                    setTitle(R.string.app_name);
                 } else {
                     showNoConnection();
                 }
@@ -201,7 +202,7 @@ public class MainActivity extends AppCompatActivity
                 movieUrl = TMDB_REQUEST_URL + TOP_RATED + API_KEY;
                 if (checkConnectivity()) {
                     getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
-                    setTitle("Top Rated Movies");
+                    setTitle(R.string.title_for_top_rated);
                 } else {
                     showNoConnection();
                 }
@@ -213,8 +214,8 @@ public class MainActivity extends AppCompatActivity
                 mCursorAdapter = new FavoriteCursorAdapter(this, null);
                 mListView.setAdapter(mCursorAdapter);
                 mListView.setVisibility(View.VISIBLE);
-                getLoaderManager().restartLoader(CURSOR_LOADER_ID, null,MainActivity.this);
-                setTitle("Favorite Movies");
+                getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, MainActivity.this);
+                setTitle(R.string.title_for_favorite_movies);
 
                 return true;
 

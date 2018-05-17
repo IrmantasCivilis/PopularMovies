@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.example.android.popularmovies.data.FavoriteContract.FavoriteEntry;
 
 public class FavoriteProvider extends ContentProvider {
@@ -16,7 +17,7 @@ public class FavoriteProvider extends ContentProvider {
     private static final android.content.UriMatcher sUriMatcher = buildUriMatcher();
     private FavoriteDbHelper mFavoriteDbHelper;
 
-    public static android.content.UriMatcher buildUriMatcher(){
+    public static android.content.UriMatcher buildUriMatcher() {
 
         android.content.UriMatcher uriMatcher = new android.content.UriMatcher(android.content.UriMatcher.NO_MATCH);
 
@@ -36,7 +37,8 @@ public class FavoriteProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection,
+                        @Nullable String[] selectionArgs, @Nullable String sortOrder) {
 
         final android.database.sqlite.SQLiteDatabase db = mFavoriteDbHelper.getReadableDatabase();
 
@@ -55,10 +57,10 @@ public class FavoriteProvider extends ContentProvider {
                         sortOrder);
                 break;
 
-                case MOVIE_WITH_ID:
-                    selection = FavoriteEntry._ID + "=?";
-                    selectionArgs = new String[]{String.valueOf(android.content.ContentUris.parseId(uri))};
-                    returnCursor = db.query(FavoriteEntry.TABLE_NAME, projection, selection, selectionArgs,
+            case MOVIE_WITH_ID:
+                selection = FavoriteEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(android.content.ContentUris.parseId(uri))};
+                returnCursor = db.query(FavoriteEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
 
@@ -69,7 +71,7 @@ public class FavoriteProvider extends ContentProvider {
         returnCursor.setNotificationUri(getContext().getContentResolver(), uri);
 
         return returnCursor;
-        }
+    }
 
     @Nullable
     @Override
@@ -84,7 +86,7 @@ public class FavoriteProvider extends ContentProvider {
             default:
                 throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
         }
-        }
+    }
 
     @Nullable
     @Override
@@ -95,11 +97,11 @@ public class FavoriteProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         Uri returnUri;
 
-        switch(match) {
+        switch (match) {
 
             case MOVIES:
                 long id = db.insert(FavoriteEntry.TABLE_NAME, null, contentValues);
-                if ( id > 0 ) {
+                if (id > 0) {
                     returnUri = android.content.ContentUris.withAppendedId(FavoriteEntry.CONTENT_URI, id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
@@ -149,7 +151,8 @@ public class FavoriteProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
+    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s,
+                      @Nullable String[] strings) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

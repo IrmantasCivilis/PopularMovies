@@ -3,6 +3,10 @@ package com.example.android.popularmovies;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.example.android.popularmovies.customclasses.Movie;
+import com.example.android.popularmovies.customclasses.Review;
+import com.example.android.popularmovies.customclasses.Trailer;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,7 +105,7 @@ public final class QueryUtils {
     }
 
     private static List<Review> extractReviewsFromJson(String reviewJSON) {
-        if (TextUtils.isEmpty(reviewJSON)){
+        if (TextUtils.isEmpty(reviewJSON)) {
             return null;
         }
         List<Review> reviews = new ArrayList<>();

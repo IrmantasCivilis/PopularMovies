@@ -1,14 +1,34 @@
 <resources>
+    // Titles
     <string name="app_name">Popular Movies</string>
+    <string name="title_for_top_rated">Top Rated Movies</string>
+    <string name="title_for_favorite_movies">Favorite Movies</string>
+    <string name="title_for_movie_details">Movie Details</string>
+
     <string name="content_description">Movie poster</string>
     <string name="no_internet_connection">No internet connection</string>
+    <string name="favorite_button">Make favorite</string>
+    <string name="favorite_button_unmake">Unmake favorite</string>
+    <string name="empty_db_message">Favorite Movies database is empty</string>
+
+    //Labels
     <string name="movie_title_label">Movie title:</string>
     <string name="release_date_label">Release date:</string>
     <string name="average_vote_label">Average vote:</string>
     <string name="overview_label">Overview:</string>
+    <string name="label_trailers">Trailers:</string>
+    <string name="label_reviews">Reviews:</string>
+
+    //Menu options
     <string name="menu_option_popular_movies">Popular movies</string>
     <string name="menu_option_top_rated">Top rated movies</string>
     <string name="menu_option_favorite_movies">Favorite movies</string>
     <string name="menu_option_delete_all_favorites">Delete all favorites</string>
-    <string name="favorite_button">Add as favorite</string>
+
+    //Toast messages
+    <string name="toast_error_adding">Error with adding to favorites</string>
+    <string name="toast_added_to_favorites">Added to Favorites</string>
+    <string name="toast_removed_from_favorites">Movie was removed from Favorites</string>
+    <string name="toast_unable_to_delete">Unable to delete</string>
+
 </resources>

@@ -1,7 +1,10 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.loaders;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+
+import com.example.android.popularmovies.customclasses.Movie;
+import com.example.android.popularmovies.QueryUtils;
 
 import java.util.List;
 

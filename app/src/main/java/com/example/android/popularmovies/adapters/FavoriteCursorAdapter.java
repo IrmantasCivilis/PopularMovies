@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,14 +8,10 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.data.FavoriteContract;
 
 public class FavoriteCursorAdapter extends CursorAdapter {
-
-    private static final String IMAGE_SIZE = "w185/";
-    private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
-    private Cursor mCursor;
-    private Context mContext;
 
     public FavoriteCursorAdapter(Context context, Cursor c) {
         super(context, c, 0);

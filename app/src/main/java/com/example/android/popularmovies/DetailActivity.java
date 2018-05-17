@@ -18,21 +18,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.example.android.popularmovies.adapters.ReviewAdapter;
+import com.example.android.popularmovies.adapters.TrailerAdapter;
+import com.example.android.popularmovies.customclasses.Review;
+import com.example.android.popularmovies.customclasses.Trailer;
 import com.example.android.popularmovies.data.FavoriteContract;
+import com.example.android.popularmovies.loaders.ReviewLoader;
+import com.example.android.popularmovies.loaders.TrailerLoader;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-//public class DetailActivity extends AppCompatActivity
-//        implements LoaderManager.LoaderCallbacks<List<Trailer>>,
-//        TrailerAdapter.TrailerListItemClickListener,
-//        ReviewAdapter.ReviewListItemClickListener {
-
-    public class DetailActivity extends AppCompatActivity
-            implements LoaderManager.LoaderCallbacks,
-            TrailerAdapter.TrailerListItemClickListener,
-            ReviewAdapter.ReviewListItemClickListener {
+public class DetailActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks,
+        TrailerAdapter.TrailerListItemClickListener,
+        ReviewAdapter.ReviewListItemClickListener {
 
     private static final String IMAGE_SIZE = "w185/";
     private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
@@ -50,15 +51,14 @@ import java.util.List;
     String reviewsUrl = "";
     TrailerAdapter mTrailerAdapter;
     ReviewAdapter mReviewAdapter;
-
-    Boolean isOverviewClicked = false;
-    Uri mMovieUri;
+    boolean isOverviewClicked = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        setTitle(R.string.title_for_movie_details);
         final ImageView mMoviePoster = findViewById(R.id.poster_image_view);
         final TextView mTitle = findViewById(R.id.title_text_view);
         final TextView mReleaseDate = findViewById(R.id.release_date_text_view);
@@ -84,7 +84,7 @@ import java.util.List;
 
         Bundle movie = intentThatStartedThisActivity.getBundleExtra("Clicked movie");
 
-        if (intentThatStartedThisActivity.hasExtra("Clicked movie")){
+        if (intentThatStartedThisActivity.hasExtra("Clicked movie")) {
 
             String posterPath = movie.getString("Poster");
             Picasso.with(this)
@@ -106,7 +106,6 @@ import java.util.List;
             mOverview.setText(overview);
 
             String id = movie.getString("Id");
-            //mMovieId.setText(id);
 
             RecyclerView trailerRecyclerView = findViewById(R.id.recycler_view_for_trailers);
             RecyclerView.LayoutManager mTrailerLayoutManager = new LinearLayoutManager(this);
@@ -127,7 +126,7 @@ import java.util.List;
 
             LoaderManager loaderManager = getLoaderManager();
             loaderManager.initLoader(TRAILER_LOADER_ID, null, DetailActivity.this);
-            loaderManager.initLoader(REVIEW_LOADER_ID, null,DetailActivity.this);
+            loaderManager.initLoader(REVIEW_LOADER_ID, null, DetailActivity.this);
 
         }
 
@@ -135,8 +134,7 @@ import java.util.List;
 
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked) {
-
+                if (isChecked) {
                     String movieTitle = mTitle.getText().toString();
                     String releaseDate = mReleaseDate.getText().toString();
                     String voteAverage = mVoteAverage.getText().toString();
@@ -157,25 +155,23 @@ import java.util.List;
 
                     Uri newUri = getContentResolver().insert(FavoriteContract.FavoriteEntry.CONTENT_URI, values);
 
-                    if (newUri == null){
-                        Toast.makeText(DetailActivity.this, "Error with adding to favorites",Toast.LENGTH_SHORT).show();
+                    if (newUri == null) {
+                        Toast.makeText(DetailActivity.this, R.string.toast_error_adding, Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(DetailActivity.this, "Added to favorite", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DetailActivity.this, R.string.toast_added_to_favorites, Toast.LENGTH_SHORT).show();
                     }
                 } else {
 
                     String movieTitle = mTitle.getText().toString();
-
                     String selection = FavoriteContract.FavoriteEntry.COLUMN_MOVIE_TITLE + " =?";
-
                     String[] selectionArgs = {movieTitle};
 
-                    int rowDeleted = getContentResolver().delete(FavoriteContract.FavoriteEntry.CONTENT_URI,selection,selectionArgs);
+                    int rowDeleted = getContentResolver().delete(FavoriteContract.FavoriteEntry.CONTENT_URI, selection, selectionArgs);
                     if (rowDeleted == 1) {
-                        Toast.makeText(DetailActivity.this, "Movie was removed from Favorites", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DetailActivity.this, R.string.toast_removed_from_favorites, Toast.LENGTH_SHORT).show();
                         toggleButton.setChecked(false);
                     } else {
-                        Toast.makeText(DetailActivity.this, "Unable to delete", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DetailActivity.this, R.string.toast_unable_to_delete, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -213,37 +209,37 @@ import java.util.List;
         }
     }
 
-        @Override
-        public Loader onCreateLoader(int i, Bundle bundle) {
-           if (i == TRAILER_LOADER_ID) {
-               return new TrailerLoader(this, videosUrl);
-           } else if(i == REVIEW_LOADER_ID) {
-               return new ReviewLoader(this, reviewsUrl);
-           }
-           return null;
+    @Override
+    public Loader onCreateLoader(int i, Bundle bundle) {
+        if (i == TRAILER_LOADER_ID) {
+            return new TrailerLoader(this, videosUrl);
+        } else if (i == REVIEW_LOADER_ID) {
+            return new ReviewLoader(this, reviewsUrl);
         }
+        return null;
+    }
 
-        @Override
-        public void onLoadFinished(Loader loader, Object o) {
+    @Override
+    public void onLoadFinished(Loader loader, Object o) {
 
-            int loaderId = loader.getId();
-            if (loaderId == TRAILER_LOADER_ID) {
-                mTrailerAdapter.clearTrailerAdapter();
+        int loaderId = loader.getId();
+        if (loaderId == TRAILER_LOADER_ID) {
+            mTrailerAdapter.clearTrailerAdapter();
 
-                if ((List<Trailer>) o != null) {
-                    mTrailerAdapter.setTrailersData((List<Trailer>) o);
-                }
+            if ((List<Trailer>) o != null) {
+                mTrailerAdapter.setTrailersData((List<Trailer>) o);
+            }
 
-            } else if (loaderId == REVIEW_LOADER_ID) {
-                mReviewAdapter.clearReviewAdapter();
-                if ((List<Review>) o != null) {
-                    mReviewAdapter.setReviewsData((List<Review>) o);
-                }
+        } else if (loaderId == REVIEW_LOADER_ID) {
+            mReviewAdapter.clearReviewAdapter();
+            if ((List<Review>) o != null) {
+                mReviewAdapter.setReviewsData((List<Review>) o);
             }
         }
+    }
 
-        @Override
-        public void onLoaderReset(Loader loader) {
+    @Override
+    public void onLoaderReset(Loader loader) {
 
         int loaderId = loader.getId();
         if (loaderId == TRAILER_LOADER_ID) {
@@ -251,27 +247,25 @@ import java.util.List;
         } else if (loaderId == REVIEW_LOADER_ID) {
             mReviewAdapter.clearReviewAdapter();
         }
-        }
+    }
 
-        public boolean isFavorite (String movieName) {
+    public boolean isFavorite(String movieName) {
         String[] columns = {FavoriteContract.FavoriteEntry.COLUMN_MOVIE_TITLE};
         String selection = FavoriteContract.FavoriteEntry.COLUMN_MOVIE_TITLE + " =?";
         String[] selectionArgs = {movieName};
-        //String limit = "1";
 
-            Cursor cursor = getContentResolver().query(FavoriteContract.FavoriteEntry.CONTENT_URI,
-                    columns,
-                    selection,
-                    selectionArgs,
-                    null
-            );
-            if (cursor.getCount() > 0){
-                cursor.close();
-                return true;
-            } else {
-                cursor.close();
-                return false;
-            }
-
+        Cursor cursor = getContentResolver().query(FavoriteContract.FavoriteEntry.CONTENT_URI,
+                columns,
+                selection,
+                selectionArgs,
+                null
+        );
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            return true;
+        } else {
+            cursor.close();
+            return false;
         }
     }
+}

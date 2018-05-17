@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.customclasses;
 
 /**
  * Movie object holds all relevant information for a single movie.
