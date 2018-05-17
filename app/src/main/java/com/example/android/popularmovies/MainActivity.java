@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.popularmovies.data.FavoriteContract.FavoriteEntry;
 
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity
     public static final String LOG_TAG = MainActivity.class.getName();
     private static final int MOVIE_LOADER_ID = 1;
     private static final int CURSOR_LOADER_ID = 4;
-    private static final String API_KEY = "";
+    private static final String API_KEY = BuildConfig.API_KEY;
     private static final String TMDB_REQUEST_URL = "https://api.themoviedb.org/3/movie/";
     private static final String POPULAR = "popular?";
     private static final String TOP_RATED = "top_rated?";
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mEmptyTextView = findViewById(R.id.empty_text_view);
@@ -74,13 +76,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             showNoConnection();
         }
-
-        mCursorAdapter = new FavoriteCursorAdapter(this, null);
-        mListView.setAdapter(mCursorAdapter);
-        //FavoriteDbHelper dbHelper = new FavoriteDbHelper(this);
-        //mDb = dbHelper.getReadableDatabase();
-        //mCursor = getAllFavoriteMovies();
-
     }
 
     @Override
@@ -184,12 +179,14 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.action_popular_movies:
 
+                mRecyclerView.setVisibility(View.VISIBLE);
                 mAdapter.clearAdapter();
-                mCursorAdapter.swapCursor(null);
+                mListView.setVisibility(View.GONE);
                 showLoadingIndicator();
                 movieUrl = TMDB_REQUEST_URL + POPULAR + API_KEY;
                 if (checkConnectivity()) {
                     getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
+                    setTitle("Popular Movies");
                 } else {
                     showNoConnection();
                 }
@@ -197,12 +194,14 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.action_top_rated_movies:
 
+                mRecyclerView.setVisibility(View.VISIBLE);
                 mAdapter.clearAdapter();
-                mCursorAdapter.swapCursor(null);
+                mListView.setVisibility(View.GONE);
                 showLoadingIndicator();
                 movieUrl = TMDB_REQUEST_URL + TOP_RATED + API_KEY;
                 if (checkConnectivity()) {
                     getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
+                    setTitle("Top Rated Movies");
                 } else {
                     showNoConnection();
                 }
@@ -210,16 +209,20 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.action_favorite_movies:
 
-                mAdapter.clearAdapter();
+                mRecyclerView.setVisibility(View.GONE);
+                mCursorAdapter = new FavoriteCursorAdapter(this, null);
+                mListView.setAdapter(mCursorAdapter);
+                mListView.setVisibility(View.VISIBLE);
                 getLoaderManager().restartLoader(CURSOR_LOADER_ID, null,MainActivity.this);
+                setTitle("Favorite Movies");
 
-                //if (mCursor.getCount() == 0) {
-                //    mEmptyTextView.setVisibility(View.VISIBLE);
-                //    mEmptyTextView.setText("Favorite Movies database is empty");
-                //} else {
-
-                //}
                 return true;
+
+            case R.id.action_delete_all_favorites:
+
+                int rowsDeleted = getContentResolver().delete(FavoriteEntry.CONTENT_URI, null, null);
+                Toast.makeText(this, "From database was deleted " + rowsDeleted + " rows", Toast.LENGTH_SHORT).show();
+                mRecyclerView.setVisibility(View.VISIBLE);
 
         }
         return super.onOptionsItemSelected(item);
@@ -234,18 +237,5 @@ public class MainActivity extends AppCompatActivity
         mLoadingIndicator.setVisibility(View.GONE);
         mEmptyTextView.setVisibility(View.VISIBLE);
         mEmptyTextView.setText(R.string.no_internet_connection);
-    }
-
-    private Cursor getAllFavoriteMovies() {
-
-        String[] projection = {FavoriteEntry._ID, FavoriteEntry.COLUMN_MOVIE_TITLE};
-
-        return getContentResolver().query(
-                FavoriteEntry.CONTENT_URI,
-                projection,
-                null,
-                null,
-                FavoriteEntry._ID
-        );
     }
 }

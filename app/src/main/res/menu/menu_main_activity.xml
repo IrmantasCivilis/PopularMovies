@@ -16,5 +16,9 @@
         android:id="@+id/action_favorite_movies"
         android:title="@string/menu_option_favorite_movies"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_delete_all_favorites"
+        android:title="@string/menu_option_delete_all_favorites"
+        app:showAsAction="never"/>
 
 </menu>

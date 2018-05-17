@@ -4,6 +4,7 @@ import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Loader;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
 import com.example.android.popularmovies.data.FavoriteContract;
 import com.squareup.picasso.Picasso;
 
@@ -35,7 +37,7 @@ import java.util.List;
     private static final String IMAGE_SIZE = "w185/";
     private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
 
-    private static final String API_KEY = "";
+    private static final String API_KEY = BuildConfig.API_KEY;
     private static final String TMDB_REQUEST_URL = "https://api.themoviedb.org/3/movie/";
     private static final String VIDEOS = "/videos?";
     private static final String TRAILER_REQUEST_URL = "https://www.youtube.com/watch?v=";
@@ -50,6 +52,7 @@ import java.util.List;
     ReviewAdapter mReviewAdapter;
 
     Boolean isOverviewClicked = false;
+    Uri mMovieUri;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,45 +65,8 @@ import java.util.List;
         final TextView mVoteAverage = findViewById(R.id.average_vote_text_view);
         final TextView mOverview = findViewById(R.id.overview_text_view);
 
-        ToggleButton toggleButton = findViewById(R.id.favorite_star_button);
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
+        final ToggleButton toggleButton = findViewById(R.id.favorite_star_button);
 
-                    String movieTitle = mTitle.getText().toString();
-                    String releaseDate = mReleaseDate.getText().toString();
-                    String voteAverage = mVoteAverage.getText().toString();
-                    String overview = mOverview.getText().toString();
-
-                    Intent intentThatStartedThisActivity = getIntent();
-                    Bundle movie = intentThatStartedThisActivity.getBundleExtra("Clicked movie");
-                    String moviePoster = movie.getString("Poster");
-                    int movieId = Integer.valueOf(movie.getString("Id"));
-
-                    ContentValues values = new ContentValues();
-                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_POSTER, moviePoster);
-                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_TITLE, movieTitle);
-                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_RELEASE_DATE, releaseDate);
-                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_AVERAGE_VOTE, voteAverage);
-                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_OVERVIEW, overview);
-                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_ID, movieId);
-
-                    Uri newUri = getContentResolver().insert(FavoriteContract.FavoriteEntry.CONTENT_URI, values);
-
-                    if (newUri == null){
-                        Toast.makeText(DetailActivity.this, "Error with adding to favorites",Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(DetailActivity.this, "Added to favorite", Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-
-                }
-            }
-        });
-
-        //TextView mMovieId = findViewById(R.id.movie_id);
         mOverview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,6 +92,8 @@ import java.util.List;
                     .into(mMoviePoster);
 
             String movieTitle = movie.getString("Title");
+            if (isFavorite(movieTitle))
+                toggleButton.setChecked(true);
             mTitle.setText(movieTitle);
 
             String releaseDate = movie.getString("Date");
@@ -162,29 +130,57 @@ import java.util.List;
             loaderManager.initLoader(REVIEW_LOADER_ID, null,DetailActivity.this);
 
         }
+
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if(isChecked) {
+
+                    String movieTitle = mTitle.getText().toString();
+                    String releaseDate = mReleaseDate.getText().toString();
+                    String voteAverage = mVoteAverage.getText().toString();
+                    String overview = mOverview.getText().toString();
+
+                    Intent intentThatStartedThisActivity = getIntent();
+                    Bundle movie = intentThatStartedThisActivity.getBundleExtra("Clicked movie");
+                    String moviePoster = movie.getString("Poster");
+                    int movieId = Integer.valueOf(movie.getString("Id"));
+
+                    ContentValues values = new ContentValues();
+                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_POSTER, moviePoster);
+                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_TITLE, movieTitle);
+                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_RELEASE_DATE, releaseDate);
+                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_AVERAGE_VOTE, voteAverage);
+                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_OVERVIEW, overview);
+                    values.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_ID, movieId);
+
+                    Uri newUri = getContentResolver().insert(FavoriteContract.FavoriteEntry.CONTENT_URI, values);
+
+                    if (newUri == null){
+                        Toast.makeText(DetailActivity.this, "Error with adding to favorites",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(DetailActivity.this, "Added to favorite", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+
+                    String movieTitle = mTitle.getText().toString();
+
+                    String selection = FavoriteContract.FavoriteEntry.COLUMN_MOVIE_TITLE + " =?";
+
+                    String[] selectionArgs = {movieTitle};
+
+                    int rowDeleted = getContentResolver().delete(FavoriteContract.FavoriteEntry.CONTENT_URI,selection,selectionArgs);
+                    if (rowDeleted == 1) {
+                        Toast.makeText(DetailActivity.this, "Movie was removed from Favorites", Toast.LENGTH_SHORT).show();
+                        toggleButton.setChecked(false);
+                    } else {
+                        Toast.makeText(DetailActivity.this, "Unable to delete", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
-
-    //@Override
-    //public Loader<List<Trailer>> onCreateLoader(int i, Bundle bundle) {
-    //    return new TrailerLoader(this, videosUrl);
-    //}
-
-    //@Override
-    //public void onLoadFinished(Loader<List<Trailer>> loader, List<Trailer> trailers) {
-
-       // mTrailerAdapter.clearTrailerAdapter();
-
-        //if (trailers != null && !trailers.isEmpty()) {
-        //    mTrailerAdapter.setTrailersData(trailers);
-        //}
-
-    //}
-
-    //@Override
-    //public void onLoaderReset(Loader<List<Trailer>> loader) {
-
-     //   mTrailerAdapter.clearTrailerAdapter();
-     //   }
 
     @Override
     public void onTrailerListItemClick(Trailer clickedTrailer) {
@@ -255,5 +251,27 @@ import java.util.List;
         } else if (loaderId == REVIEW_LOADER_ID) {
             mReviewAdapter.clearReviewAdapter();
         }
+        }
+
+        public boolean isFavorite (String movieName) {
+        String[] columns = {FavoriteContract.FavoriteEntry.COLUMN_MOVIE_TITLE};
+        String selection = FavoriteContract.FavoriteEntry.COLUMN_MOVIE_TITLE + " =?";
+        String[] selectionArgs = {movieName};
+        //String limit = "1";
+
+            Cursor cursor = getContentResolver().query(FavoriteContract.FavoriteEntry.CONTENT_URI,
+                    columns,
+                    selection,
+                    selectionArgs,
+                    null
+            );
+            if (cursor.getCount() > 0){
+                cursor.close();
+                return true;
+            } else {
+                cursor.close();
+                return false;
+            }
+
         }
     }
