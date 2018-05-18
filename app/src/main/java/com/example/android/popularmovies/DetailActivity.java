@@ -43,6 +43,7 @@ public class DetailActivity extends AppCompatActivity
     private static final String VIDEOS = "/videos?";
     private static final String TRAILER_REQUEST_URL = "https://www.youtube.com/watch?v=";
     private static final String REVIEWS = "/reviews?";
+    private static final String API_KEY_PREFIX = "api_key=";
 
     private static final int TRAILER_LOADER_ID = 2;
     private static final int REVIEW_LOADER_ID = 3;
@@ -121,8 +122,8 @@ public class DetailActivity extends AppCompatActivity
             mReviewAdapter = new ReviewAdapter(this, new ArrayList<Review>(), this);
             reviewRecyclerView.setAdapter(mReviewAdapter);
 
-            videosUrl = TMDB_REQUEST_URL + id + VIDEOS + API_KEY;
-            reviewsUrl = TMDB_REQUEST_URL + id + REVIEWS + API_KEY;
+            videosUrl = TMDB_REQUEST_URL + id + VIDEOS + API_KEY_PREFIX + API_KEY;
+            reviewsUrl = TMDB_REQUEST_URL + id + REVIEWS + API_KEY_PREFIX + API_KEY;
 
             LoaderManager loaderManager = getLoaderManager();
             loaderManager.initLoader(TRAILER_LOADER_ID, null, DetailActivity.this);

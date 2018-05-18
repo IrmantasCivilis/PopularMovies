@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TMDB_REQUEST_URL = "https://api.themoviedb.org/3/movie/";
     private static final String POPULAR = "popular?";
     private static final String TOP_RATED = "top_rated?";
+    private static final String API_KEY_PREFIX = "api_key=";
 
     String movieUrl = "";
     MovieAdapter mAdapter;
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setAdapter(mAdapter);
 
         showLoadingIndicator();
-        movieUrl = TMDB_REQUEST_URL + POPULAR + API_KEY;
+        movieUrl = TMDB_REQUEST_URL + POPULAR + API_KEY_PREFIX + API_KEY;
 
         if (checkConnectivity()) {
             LoaderManager loaderManager = getLoaderManager();
@@ -184,7 +185,7 @@ public class MainActivity extends AppCompatActivity
                 mAdapter.clearAdapter();
                 mListView.setVisibility(View.GONE);
                 showLoadingIndicator();
-                movieUrl = TMDB_REQUEST_URL + POPULAR + API_KEY;
+                movieUrl = TMDB_REQUEST_URL + POPULAR + API_KEY_PREFIX + API_KEY;
                 if (checkConnectivity()) {
                     getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
                     setTitle(R.string.app_name);
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity
                 mAdapter.clearAdapter();
                 mListView.setVisibility(View.GONE);
                 showLoadingIndicator();
-                movieUrl = TMDB_REQUEST_URL + TOP_RATED + API_KEY;
+                movieUrl = TMDB_REQUEST_URL + TOP_RATED + API_KEY_PREFIX + API_KEY;
                 if (checkConnectivity()) {
                     getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
                     setTitle(R.string.title_for_top_rated);
