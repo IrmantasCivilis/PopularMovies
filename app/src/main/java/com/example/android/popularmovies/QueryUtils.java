@@ -40,7 +40,7 @@ public final class QueryUtils {
 
     // Reviews keys
     private static final String KEY_AUTHOR = "author";
-    private static final String KEY_URL = "url";
+    private static final String KEY_CONTENT = "content";
 
     public QueryUtils() {
     }
@@ -117,9 +117,9 @@ public final class QueryUtils {
             for (int i = 0; i < reviewsArray.length(); i++) {
                 JSONObject currentReview = reviewsArray.getJSONObject(i);
                 String reviewAuthor = currentReview.getString(KEY_AUTHOR);
-                String reviewUrl = currentReview.getString(KEY_URL);
+                String reviewContent = currentReview.getString(KEY_CONTENT);
 
-                Review review = new Review(reviewAuthor, reviewUrl);
+                Review review = new Review(reviewAuthor, reviewContent);
                 reviews.add(review);
             }
         } catch (JSONException e) {

@@ -15,12 +15,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.popularmovies.adapters.FavoriteCursorAdapter;
 import com.example.android.popularmovies.adapters.MovieAdapter;
 import com.example.android.popularmovies.customclasses.Movie;
 import com.example.android.popularmovies.data.FavoriteContract.FavoriteEntry;
@@ -45,12 +43,10 @@ public class MainActivity extends AppCompatActivity
 
     String movieUrl = "";
     MovieAdapter mAdapter;
-    FavoriteCursorAdapter mCursorAdapter;
     Boolean isConnected;
     TextView mEmptyTextView;
     ProgressBar mLoadingIndicator;
     RecyclerView mRecyclerView;
-    ListView mListView;
     Cursor mCursor;
 
     @Override
@@ -61,7 +57,6 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView = findViewById(R.id.recycler_view);
         mEmptyTextView = findViewById(R.id.empty_text_view);
         mLoadingIndicator = findViewById(R.id.loading_indicator);
-        mListView = findViewById(R.id.list_view);
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -122,7 +117,8 @@ public class MainActivity extends AppCompatActivity
                 mEmptyTextView.setVisibility(View.VISIBLE);
                 mEmptyTextView.setText(R.string.empty_db_message);
             } else {
-                mCursorAdapter.swapCursor(mCursor);
+                List<Movie> movies = transferData(mCursor);
+                mAdapter.setMovieData(movies);
             }
         }
     }
@@ -133,7 +129,7 @@ public class MainActivity extends AppCompatActivity
         if (loaderId == MOVIE_LOADER_ID) {
             mAdapter.clearAdapter();
         } else if (loaderId == CURSOR_LOADER_ID) {
-            mCursorAdapter.swapCursor(null);
+            mAdapter.clearAdapter();
         }
     }
 
@@ -183,7 +179,6 @@ public class MainActivity extends AppCompatActivity
 
                 mRecyclerView.setVisibility(View.VISIBLE);
                 mAdapter.clearAdapter();
-                mListView.setVisibility(View.GONE);
                 showLoadingIndicator();
                 movieUrl = TMDB_REQUEST_URL + POPULAR + API_KEY_PREFIX + API_KEY;
                 if (checkConnectivity()) {
@@ -198,7 +193,6 @@ public class MainActivity extends AppCompatActivity
 
                 mRecyclerView.setVisibility(View.VISIBLE);
                 mAdapter.clearAdapter();
-                mListView.setVisibility(View.GONE);
                 showLoadingIndicator();
                 movieUrl = TMDB_REQUEST_URL + TOP_RATED + API_KEY_PREFIX + API_KEY;
                 if (checkConnectivity()) {
@@ -211,10 +205,9 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.action_favorite_movies:
 
-                mRecyclerView.setVisibility(View.GONE);
-                mCursorAdapter = new FavoriteCursorAdapter(this, null);
-                mListView.setAdapter(mCursorAdapter);
-                mListView.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mAdapter.clearAdapter();
+                showLoadingIndicator();
                 getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, MainActivity.this);
                 setTitle(R.string.title_for_favorite_movies);
 
@@ -224,7 +217,10 @@ public class MainActivity extends AppCompatActivity
 
                 int rowsDeleted = getContentResolver().delete(FavoriteEntry.CONTENT_URI, null, null);
                 Toast.makeText(this, "From database was deleted " + rowsDeleted + " rows", Toast.LENGTH_SHORT).show();
-                mRecyclerView.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
+                mEmptyTextView.setVisibility(View.VISIBLE);
+                mEmptyTextView.setText(R.string.empty_db_message);
+
 
         }
         return super.onOptionsItemSelected(item);
@@ -239,5 +235,28 @@ public class MainActivity extends AppCompatActivity
         mLoadingIndicator.setVisibility(View.GONE);
         mEmptyTextView.setVisibility(View.VISIBLE);
         mEmptyTextView.setText(R.string.no_internet_connection);
+    }
+
+    public List<Movie> transferData(Cursor cursor) {
+
+        List<Movie> movies = new ArrayList<>();
+
+        cursor.moveToFirst();
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+
+            String poster = cursor.getString(cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_POSTER));
+            String title = cursor.getString(cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_TITLE));
+            String date = cursor.getString(cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_RELEASE_DATE));
+            String overview = cursor.getString(cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_OVERVIEW));
+            double averageVote = cursor.getDouble(cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_AVERAGE_VOTE));
+            int movieId = cursor.getInt(cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_ID));
+            Movie movie = new Movie(poster, title, date, overview, averageVote, movieId);
+            movies.add(movie);
+            cursor.moveToNext();
+        }
+        cursor.close();
+
+        return movies;
     }
 }

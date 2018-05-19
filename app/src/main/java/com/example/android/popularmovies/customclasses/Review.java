@@ -3,18 +3,18 @@ package com.example.android.popularmovies.customclasses;
 public class Review {
 
     private String mReviewAuthor;
-    private String mReviewUrl;
+    private String mReviewContent;
 
-    public Review(String reviewAuthor, String reviewUrl) {
+    public Review(String reviewAuthor, String reviewContent) {
         mReviewAuthor = reviewAuthor;
-        mReviewUrl = reviewUrl;
+        mReviewContent = reviewContent;
     }
 
     public String getReviewAuthor() {
         return mReviewAuthor;
     }
 
-    public String getReviewUrl() {
-        return mReviewUrl;
+    public String getReviewContent() {
+        return mReviewContent;
     }
 }

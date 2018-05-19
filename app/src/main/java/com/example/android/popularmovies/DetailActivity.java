@@ -199,14 +199,18 @@ public class DetailActivity extends AppCompatActivity
     @Override
     public void onReviewListItemClick(Review clickedReview) {
 
-        String reviewUrl = clickedReview.getReviewUrl();
+        String reviewAuthor = clickedReview.getReviewAuthor();
+        String reviewContent = clickedReview.getReviewContent();
 
-        Uri review = Uri.parse(reviewUrl);
+        Bundle review = new Bundle();
+        review.putString("Author", reviewAuthor);
+        review.putString("Content", reviewContent);
 
-        Intent reviewIntent = new Intent(Intent.ACTION_VIEW, review);
+        Intent startReviewActivityIntent = new Intent(DetailActivity.this, ReviewActivity.class);
+        startReviewActivityIntent.putExtra("Chosen review", review);
 
-        if (reviewIntent.resolveActivity(getPackageManager()) != null) {
-            startActivity(reviewIntent);
+        if (startReviewActivityIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(startReviewActivityIntent);
         }
     }
 
